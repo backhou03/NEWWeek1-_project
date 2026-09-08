@@ -1,86 +1,71 @@
-using UnityEngine;
 
+using UnityEngine;
+using Unity.Mathematics;
+using DG.Tweening;
+using System.Collections;
 public class SpawnManager : MonoBehaviour
 {
-    public static SpawnManager Instance { get; private set; }
+    [SerializeField] private Transform[] enemySpawnOffsets;
+    [SerializeField] private PlayerController player;
+    [SerializeField] private float sqrLen;
+    [SerializeField] private float sqrDistance;
+    [SerializeField] private GameObject[] enermy;
+    private int randomEnermy;
+    private int randomEnermyPos;
+    private GameObject hi;
+    Vector3 prevPosition;
 
-    public StageSpawnData curStageSpawnData;
+    public Transform cam;
+    public Transform cameraOffset;
+    Vector3 rotationVector = new Vector3(0, 180, 0);
+    //[SerializeField] private float spawnPerDistance;
+    [Space]
 
-    private Transform target;
+    [Header("Test")]
+    [SerializeField] private Vector3 moveVector;
+    public float timer = 2;
 
-    private float timeSinceLastSpawned;
 
-    void Awake()
+
+    private void Start()
     {
-        if (Instance != null)
+        prevPosition = player.transform.position;
+        StartCoroutine(DelayStart());
+    }
+
+    IEnumerator DelayStart()
+    {
+        yield return new WaitForSeconds(2f);
+        cam.DOMove(cameraOffset.position, 2f).OnComplete(() =>
         {
-            Destroy(gameObject);
-            return;
+            player.Init();
+        });
+        cam.DORotateQuaternion(cameraOffset.rotation, 2f);
+    }
+
+
+    private void OnEnd()
+    {
+
+    }
+
+    private void Update()
+    {
+
+        moveVector = player.transform.position - prevPosition;//Vector3.Distance(prevPosition, player.position);
+        sqrLen = moveVector.sqrMagnitude;
+        if (sqrLen> sqrDistance)//distance 10 넣었을때 다른이유
+        {
+            Debug.Log("Spawn!");
+            //moveVector = 0f;
+            
+            randomEnermy = UnityEngine.Random.Range(0, 2);
+            randomEnermyPos = UnityEngine.Random.Range(0, 3);
+            hi = Instantiate(enermy[randomEnermy], enemySpawnOffsets[randomEnermyPos].position, enermy[randomEnermy].transform.rotation);
+            prevPosition = player.transform.position;
+
         }
 
-        Instance = this;
-    }
-
-
-    public void Init(StageSpawnData stageSpawnData)
-    {
-        curStageSpawnData = stageSpawnData;
-        timeSinceLastSpawned = 0f;
-        target = GameObject.FindGameObjectWithTag("Player").transform;
-        InitialSpawn();
-    }
-
-    [ContextMenu("Initial Spawn")]
-    void InitialSpawn()
-    {
-        Vector3 spawnPos = curStageSpawnData.playerInitialPos;
-        for (int i = 0; i < curStageSpawnData.initialNeutralAmount; i++)
-        {
-            spawnPos += Random.insideUnitSphere * curStageSpawnData.initialSpawnRadius;
-            spawnPos.y = 1;
-
-            GameObject obj = PoolManager.Instance.Get(PoolType.Neutral);
-            obj.transform.position = spawnPos;
-            obj.transform.rotation = Quaternion.identity;
-        }
-    }
-
-    void Update()
-    {
-        timeSinceLastSpawned += Time.deltaTime;
-        if (timeSinceLastSpawned >= curStageSpawnData.spawnInterval)
-        {
-            Spawn();
-            timeSinceLastSpawned = 0f;
-        }
-    }
-
-    void Spawn()
-    {
-        if (target == null) return;
-        Vector3 spawnPos = target.position;
-
-        spawnPos += Random.insideUnitSphere * curStageSpawnData.nearPlayerSpawnRadius;
-        spawnPos.y = 1;
-
-        GameObject obj = PoolManager.Instance.Get(GetSpawnType());
-        obj.transform.position = spawnPos;
-        obj.transform.rotation = Quaternion.identity;
-    }
-
-    PoolType GetSpawnType()
-    {
-        float cumulative = 0f;
-
-        foreach (var spawnData in curStageSpawnData.spawnDataList)
-        {
-            cumulative += spawnData.weight;
-            int randomVal = Random.Range(1, 100);
-
-            if (randomVal <= cumulative)
-                return spawnData.type;
-        }
-
-        return curStageSpawnData.spawnDataList[0].type;
+        
     }
 }

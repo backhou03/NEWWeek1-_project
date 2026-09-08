@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class PlayerUI : MonoBehaviour
 {
+    public TextMeshProUGUI text2;
     [SerializeField] private Image comboGuide;
     [SerializeField] private TextMeshProUGUI comboText;
     [SerializeField] private TextMeshProUGUI speedText;
@@ -17,6 +18,24 @@ public class PlayerUI : MonoBehaviour
     {
         guideOriginColor = comboGuide.color;
     }
+    public void Distance(float dis)
+    {
+        float d = dis;
+        if (SceneManage.infinityMap == false)
+        {
+            text2.text = d.ToString("0") + "m / 1000m";
+        }
+        else
+        {
+            text2.text = d.ToString("0")+"m";
+        }
+    }
+    public void Update()
+    {
+        Distance(SectionTrigger.zPos);
+    }
+
+
 
     public void SetSpeed(float speed)
     {
@@ -76,6 +95,6 @@ public class PlayerUI : MonoBehaviour
     public void ComboBreak()
     {
         comboText.text = "0";
-        comboGuide.gameObject.SetActive(false);
+        //comboGuide.gameObject.SetActive(false);
     }
 }

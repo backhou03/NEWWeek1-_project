@@ -5,15 +5,27 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/MainLobby.unity
     guid: 6f6afb71a3e5f474e920c46fc702ddae
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/GameScene.unity
     guid: f1e6b1b65551f9a458f7e511ca0cf373
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Shop.unity
     guid: f8f44342e251ab544ae9ced87cf39683
+  - enabled: 0
+    path: Assets/Scenes/kyg_Lobby.unity
+    guid: 58747e1f6bf5b0e48a2c45e197095595
+  - enabled: 1
+    path: Assets/Scenes/kyg_game.unity
+    guid: 337ac07be414cb341a0feb9fdd224d0f
+  - enabled: 0
+    path: Assets/Scenes/kyg_gameover.unity
+    guid: 3707e594bdd2aa44bb783808db20d4ec
+  - enabled: 0
+    path: Assets/Scenes/kyg_win.unity
+    guid: ec5b0b420c0eeee44b2a396c234f74eb
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: 268bcc00f6ca10b4995304d5f83ef28d, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 85a4c9be8273d3343bd58df9dad962a2, type: 3}

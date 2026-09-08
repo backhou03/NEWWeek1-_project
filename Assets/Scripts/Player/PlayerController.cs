@@ -11,6 +11,7 @@ public class PlayerController : MonoBehaviour
 {
     [SerializeField]
     private PlayerInput playerInput;
+
     private PlayerAbility playerAbility;
 
     [SerializeField] private PlayerUI playerUI;
@@ -19,7 +20,7 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField]
     private bool comboAvailable = true;
-    [SerializeField] private int comboCnt = 0;
+    public int comboCnt = 0;
 
 
     [SerializeField] private float comboDuration = defaultDuration;
@@ -96,22 +97,23 @@ public class PlayerController : MonoBehaviour
     private bool isFinish = false;
     [SerializeField] private GameObject root;
     [SerializeField] private int moveCount;
-    
+    private float moveArrow = 1.4f;
+    private int arrowCount = 1;
+ 
 
 
     void Start()
     {
+
         Cursor.visible = false;
-        Init();
-        
     }
 
 
-    public void GameOver()
+    public void InitInput()
     {
         playerInput.actions["Left"].performed -= OnLeft;
         playerInput.actions["Right"].performed -= OnRight;
-        playerInput.actions["Rotate"].performed -= OnRotate;
+        /*playerInput.actions["Rotate"].performed -= OnRotate;*/
 
         playerInput.actions["Lmove"].performed -= OnLeftMove;
         playerInput.actions["Rmove"].performed -= OnRightMove;
@@ -121,7 +123,7 @@ public class PlayerController : MonoBehaviour
                 playerInput.actions["Turn"].canceled -= OnTurnEnd;*/
         playerInput.actions["Jump"].performed -= OnJump;
         playerInput.actions["Sprint"].performed -= OnSprint;
-        isFinish = true;
+        
     }
 
     public void Init()
@@ -132,9 +134,10 @@ public class PlayerController : MonoBehaviour
         playerAbility = GetComponent<PlayerAbility>();
 
         //Input action binding
+        InitInput();
         playerInput.actions["Left"].performed += OnLeft;
         playerInput.actions["Right"].performed += OnRight;
-        playerInput.actions["Rotate"].performed += OnRotate;
+        /*playerInput.actions["Rotate"].performed += OnRotate;*/
         /*        playerInput.actions["Turn"].performed += OnTurn;
                 playerInput.actions["Turn"].canceled += OnTurnEnd;
         */
@@ -328,7 +331,7 @@ public class PlayerController : MonoBehaviour
         StartCoroutine(WaitCombo()); 
     }
 
-   
+/*   
     private void OnRotate(CallbackContext context)
     {
         if (isFinish)
@@ -336,7 +339,8 @@ public class PlayerController : MonoBehaviour
         Vector2 mouse = context.ReadValue<Vector2>();
         float mouseX = mouse.x * mouseSensitivity * Time.deltaTime;
         transform.Rotate(0, mouseX, 0);
-    }
+    }*/
+
 
     Vector3 targetPos;
     //여기부터 강영교
@@ -344,12 +348,12 @@ public class PlayerController : MonoBehaviour
     {
         if (isFinish)
             return;
-        if (moveCount > -1)
+        if (moveCount > -arrowCount)
         {
-            Vector3 move = root.transform.position + new Vector3(-1, 0, 0);
-            moveCount -= 1;
-            targetPos = move;
-            //root.transform.position = move;
+            Vector3 move = root.transform.position - new Vector3(moveArrow, 0, 0);
+            moveCount -= arrowCount;
+            //targetPos = move;
+            root.transform.position = move;
             Debug.Log("left");
         }
         
@@ -358,13 +362,13 @@ public class PlayerController : MonoBehaviour
     {
         if (isFinish)
             return;
-        if (moveCount < 1)
+        if (moveCount < arrowCount)
         {
-            Vector3 move = root.transform.position + new Vector3(1, 0, 0);
-            targetPos = move;
-            //root.transform.position = move;
+            Vector3 move = root.transform.position + new Vector3(moveArrow, 0, 0);
+            //targetPos = move;
+            root.transform.position = move;
             Debug.Log("right");
-            moveCount += 1;
+            moveCount += arrowCount;
 
         }
 
